@@ -1,0 +1,10 @@
+[package]
+name = "pancurses-menu"
+version = "0.1.0"
+authors = ["Maid Dog <maiddogsrl@gmail.com>"]
+
+[lib]
+name = "pancurses_menu"
+
+[dependencies]
+pancurses = "0.11"

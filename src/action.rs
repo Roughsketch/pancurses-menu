@@ -1,0 +1,15 @@
+pub enum MenuAction {
+    Left,
+    Right,
+    Up,
+    Down,
+    ScrollUp,
+    ScrollDown,
+    PageUp,
+    PageDown,
+    First,
+    Last,
+    Next,
+    Prev,
+    Toggle,
+}
