@@ -43,12 +43,8 @@ impl<'a> Menu<'a> {
         
         self.print_center(&self.window, 0, self.title.clone());
 
-        for (idx, item) in self.items.iter().enumerate() {
-            if idx > self.max_shown() {
-                break;
-            }
-
-            if idx == self.selection {
+        for (idx, item) in self.items.iter().skip(self.top).take(self.max_shown() + 1).enumerate() {
+            if idx == self.selection - self.top {
                 self.window.mvprintw((idx + 1) as i32, offset, ">");
             }
 
@@ -75,7 +71,7 @@ impl<'a> Menu<'a> {
         self.boxed
     }
 
-    pub fn multi(&mut self, value: bool) -> &Self {
+    pub fn multi(&mut self, value: bool) -> &mut Self {
         self.multi_select = value;
         self
     }
@@ -105,15 +101,44 @@ impl<'a> Menu<'a> {
             self.selection += 1;
         }
 
-        if self.selection - self.top > self.max_shown() {
-            self.top += 1;
-        }
+        self.inc(1 as usize);
     }
 
     pub fn mvup(&mut self) {
         if self.selection > usize::min_value() {
             self.selection -= 1;
         }
+
+        self.dec(1 as usize);
+    }
+
+    pub fn mvpgdown(&mut self) {
+        let max = self.max_shown() + 1;
+        self.selection = usize::min(self.items.len() - 1, self.selection + max);
+        self.inc(max);
+    }
+
+    pub fn mvpgup(&mut self) {
+        let max = self.max_shown() + 1;
+        self.dec(max);
+        if max > self.selection {
+            self.selection = 0;
+        } else {
+            self.selection -= max;
+        }
+    }
+
+    pub fn mvtop(&mut self) {
+        self.top = 0;
+        self.selection = 0;
+    }
+
+    pub fn mvbot(&mut self) {
+        if self.items.len() > self.max_shown() {
+            self.top = self.items.len() - self.max_shown() - 1;
+        }
+
+        self.selection = self.items.len() - 1;
     }
 
     pub fn select(&mut self) {
@@ -127,6 +152,28 @@ impl<'a> Menu<'a> {
 
         if let Some(item) = self.items.get_mut(self.selection) {
             item.toggle();
+        }
+    }
+
+    fn inc<T: Into<usize>>(&mut self, amount: T) {
+        let max = self.max_shown();
+        let item_len = self.items.len();
+
+        if  self.selection - self.top > max &&
+            max < item_len &&
+            self.top < item_len - max {
+            self.top = usize::min(item_len - max - 1, self.top + amount.into());
+        }
+    }
+
+    fn dec<T: Into<usize>>(&mut self, amount: T) {
+        let val = amount.into();
+        if  self.selection == self.top && self.top > 0 {
+            if val >= self.top {
+                self.top = 0;
+            } else {
+                self.top -= val;
+            }
         }
     }
 

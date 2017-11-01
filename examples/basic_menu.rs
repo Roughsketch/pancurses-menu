@@ -7,6 +7,7 @@ use pancurses_menu::*;
 fn main() {
     let window = initscr();
 
+    noecho();
     if has_colors() {
         start_color();
 
@@ -30,6 +31,7 @@ fn main() {
     let mut menu = Menu::new(&menu_win, "Title");
 
     menu.boxed(true)
+        .multi(true)
         .add_string("Choice 1")
         .add_string("Choice 2")
         .add_string("Choice 3")
@@ -50,9 +52,13 @@ fn main() {
     loop {
         match window.getch() {
             Some(Input::Character('q')) => break,
+            Some(Input::Character(' ')) => menu.select(),
             Some(Input::KeyDown) => menu.mvdown(),
             Some(Input::KeyUp) => menu.mvup(),
-            Some(Input::Character(' ')) => menu.select(),
+            Some(Input::KeyRight) => menu.mvpgdown(),
+            Some(Input::KeyLeft) => menu.mvpgup(),
+            Some(Input::KeyHome) => menu.mvtop(),
+            Some(Input::KeyEnd) => menu.mvbot(),
             _ => (),
         }
         menu.update();
