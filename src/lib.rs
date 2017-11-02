@@ -80,6 +80,10 @@ impl<'a> Menu<'a> {
         self.multi_select
     }
 
+    pub fn selected(&self) -> String {
+        self.items[self.selection].desc()
+    }
+
     pub fn add_string<T: Into<String>>(&mut self, item: T) -> &mut Self {
         let mut item = MenuItem::new(item.into());
 
