@@ -27,21 +27,24 @@ fn main() {
 
     let max_x = window.get_max_x();
 
-    let menu_win = window.subwin(5, max_x / 2, 2, max_x / 4).unwrap();
+    let menu_win = window.subwin(5, max_x / 2 - 2, 2, 2).unwrap();
+    let info_win = window.subwin(5, max_x / 2 - 2, 2, max_x / 2).unwrap();
     let mut menu = Menu::new(&menu_win, "Title");
 
+    info_win.draw_box(0, 0);
+    info_win.refresh();
+
     menu.boxed(true)
-        .multi(true)
-        .add_string("Choice 1")
-        .add_string("Choice 2")
-        .add_string("Choice 3")
-        .add_string("Choice 4")
-        .add_string("Choice 5")
-        .add_string("Choice 6")
-        .add_string("Choice 7")
-        .add_string("Choice 8")
-        .add_string("Choice 9")
-        .add_string("Choice 10");
+        .add_item("Choice 1")
+        .add_item("Choice 2")
+        .add_item("Choice 3")
+        .add_item("Choice 4")
+        .add_item("Choice 5")
+        .add_item("Choice 6")
+        .add_item("Choice 7")
+        .add_item("Choice 8")
+        .add_item("Choice 9")
+        .add_item("Choice 10");
 
     
     menu.update();
@@ -53,6 +56,25 @@ fn main() {
         match window.getch() {
             Some(Input::Character('q')) => break,
             Some(Input::Character(' ')) => menu.select(),
+            Some(Input::Character('\n')) => {
+                let selected = menu.selected();
+
+                match &*selected {
+                    "Choice 1" => info_win.mvprintw(1, 1, "Choice 1 was selected"),
+                    "Choice 2" => info_win.mvprintw(1, 1, "Choice 2 was selected"),
+                    "Choice 3" => info_win.mvprintw(1, 1, "Choice 3 was selected"),
+                    "Choice 4" => info_win.mvprintw(1, 1, "Choice 4 was selected"),
+                    "Choice 5" => info_win.mvprintw(1, 1, "Choice 5 was selected"),
+                    "Choice 6" => info_win.mvprintw(1, 1, "Choice 6 was selected"),
+                    "Choice 7" => info_win.mvprintw(1, 1, "Choice 7 was selected"),
+                    "Choice 8" => info_win.mvprintw(1, 1, "Choice 8 was selected"),
+                    "Choice 9" => info_win.mvprintw(1, 1, "Choice 9 was selected"),
+                    "Choice 10" => info_win.mvprintw(1, 1, "Choice 10 was selected"),
+                    _ => info_win.mvprintw(1, 1, "Nothing is selected"),
+                };
+
+                info_win.refresh();
+            }
             Some(Input::KeyDown) => menu.mvdown(),
             Some(Input::KeyUp) => menu.mvup(),
             Some(Input::KeyRight) => menu.mvpgdown(),
