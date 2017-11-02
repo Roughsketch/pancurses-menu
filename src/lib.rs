@@ -95,7 +95,7 @@ impl<'a> Menu<'a> {
         self
     }
 
-    pub fn add_item<T: Into<MenuItem>>(&mut self, item: T) -> &Self {
+    pub fn add_item<T: Into<MenuItem>>(&mut self, item: T) -> &mut Self {
         self.items.push(item.into());
         self
     }
