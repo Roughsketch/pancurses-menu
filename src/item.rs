@@ -33,3 +33,9 @@ impl FromStr for MenuItem {
         Ok(MenuItem::new(s))
     }
 }
+
+impl<'a> From<&'a str> for MenuItem {
+    fn from(s: &str) -> Self {
+        MenuItem::new(s)
+    }
+}
